@@ -3,6 +3,11 @@ project(WPA_Cracker C)
 
 set(CMAKE_C_STANDARD 11)
 
-file(READ cmake-build-debug/input.hc22000 hfile)
+# Find OpenSSL
+find_package(OpenSSL REQUIRED)
 
 add_executable(WPA_Cracker main.c)
+
+include_directories(${OPENSSL_INCLUDE_DIR})
+
+target_link_libraries(${PROJECT_NAME} OpenSSL::SSL OpenSSL::Crypto)

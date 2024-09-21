@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <openssl/sha.h>
 
 #define SIZE_MAC 18
 #define SIZE_ESSENTIALS 33
@@ -94,6 +95,10 @@ struct wpa_hash get_input(char *filepath) {
     }
 
     return hash;
+}
+
+void build_hash() {
+
 }
 
 int main(void) {
