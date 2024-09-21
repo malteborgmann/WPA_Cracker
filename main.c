@@ -2,21 +2,42 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct input{
-    int version;
-    char *pmkid;
-    char *ssid;
-    char *mac_client;
-    char *mac_router;
+
+/*
+WPA*01*PMKID*MAC_AP*MAC_CLIENT*ESSID***MESSAGEPAIR
+WPA*02*MIC*MAC_AP*MAC_CLIENT*ESSID*NONCE_AP*EAPOL_CLIENT*MESSAGEPAIR
+https://hashcat.net/wiki/doku.php?id=cracking_wpawpa2
+*/
+
+/*
+ * Actually we only need PMKID, MAC_AP, MAC_CLIENT, ESSID
+ */
+
+struct wpa{
+    struct {
+        char *pmkid;
+        char *mac_ap;
+        char *mac_client;
+        char *essid;
+        char *messagepair;
+    } wpa1;
+    struct {
+        char *mic;
+        char *mac_ap;
+        char *mac_client;
+        char *essid;
+        char *nonce_ap;
+        char *eapol_client;
+        char *messagepair;
+    } wpa2;
 };
 
-void print_info(struct input *info) {
+void print_info(struct wpa *info) {
     printf("Data received from 22000 file: \n");
-    printf("version: %d\n", info->version);
-    printf("pmkid: %s\n", info->pmkid);
-    printf("ssid: %s\n", info->ssid);
-    printf("mac_client: %s\n", info->mac_client);
-    printf("mac_router: %s\n", info->mac_router);
+    printf("pmkid: %s\n", info->wpa1.pmkid);
+    printf("ssid: %s\n", info->wpa1.essid);
+    printf("mac_client: %s\n", info->wpa1.mac_client);
+    printf("mac_ap: %s\n", info->wpa1.mac_ap);
     printf("\n");
 }
 
