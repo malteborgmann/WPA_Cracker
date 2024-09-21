@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <openssl/sha.h>
+#include <openssl/evp.h>
+#include <openssl/hmac.h>
 
 #define SIZE_MAC 18
 #define SIZE_ESSENTIALS 33
@@ -97,12 +99,40 @@ struct wpa_hash get_input(char *filepath) {
     return hash;
 }
 
-void build_hash() {
+void get_hash(char *string) {
+
 
 }
 
 int main(void) {
-    char filepath [] = "./data/input.hc22000";
+
+    const char *password = "wireshark";  // The password
+    const unsigned char *essid = (unsigned char *)"ikeriri-5g";  // The ESSID (salt)
+    int iterations = 4096;  // Number of iterations
+    int key_length = 32;  // Output key length (32 bytes for PMK)
+    const unsigned char *mac_ap = (unsigned char *)"500f807018d0";  // MAC of the AP
+    const unsigned char *mac_cl = (unsigned char *)"4040a75073db";  // MAC of the client
+
+    unsigned char key[key_length];
+
+    // Perform PBKDF2-HMAC-SHA256
+    unsigned char pmk[key_length];
+    if (PKCS5_PBKDF2_HMAC(password, strlen(password), essid, strlen((char *)essid), iterations, EVP_sha1(), key_length, pmk) == 0) {
+        printf("Error deriving PMK.\n");
+        return 1;
+    }
+
+    // Print derived key in hexadecimal format
+    printf("Derived key: ");
+    for (int i = 0; i < key_length; i++) {
+        printf("%02x", key[i]);
+    }
+    printf("\n");
+
+
+    return 0;
+
+    /*char filepath [] = "./data/input.hc22000";
     struct wpa_hash hash = get_input(filepath);
 
     // Output WPA1 data if present
@@ -135,5 +165,5 @@ int main(void) {
     free(hash.wpa2.nonce_ap);
     free(hash.wpa2.eapol_client);
 
-    return 0;
+    return 0;*/
 }
