@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 struct input{
     int version;
@@ -43,9 +44,35 @@ void get_input(char *filename) {
 
 
 int main(void) {
-    FILE *fptr = fopen("input.hc22000", "r");
-    if (fptr == NULL)
+    FILE *fptr = fopen("./data/input.hc22000", "r");
+    if (fptr == NULL) {
         exit(EXIT_FAILURE);
+    }
     printf("File opened successfully\n");
+
+    char * line = NULL;
+    size_t len = 0;
+    ssize_t wpa;
+
+    while ((wpa = getline(&line, &len, fptr)) != -1) {
+        printf("Retrieved line of length %zu:\n", wpa);
+        printf("%s", line);
+
+        char delimiter[] = "*";
+        char *ptr;
+
+        // initialisieren und ersten Abschnitt erstellen
+        ptr = strtok(line, delimiter);
+
+        while(ptr != NULL) {
+            printf("Abschnitt gefunden: %s\n", ptr);
+            // naechsten Abschnitt erstellen
+            ptr = strtok(NULL, delimiter);
+        }
+    }
+    fclose(fptr);
+    if (line) {
+        free(line);
+    }
     return 0;
 }
